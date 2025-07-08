@@ -2,6 +2,7 @@ import streamlit as st
 from data_schema_config.column_schema import ColumnType
 from data_schema_config.table_schema import TableSchema
 
+
 st.title("Step 1: Define Columns")
 
 # Initialize schema in session state if it doesn't exist
