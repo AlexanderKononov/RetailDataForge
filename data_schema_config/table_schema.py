@@ -11,6 +11,11 @@ class TableSchema:
             raise ValueError(f"Column '{column.name}' already exists.")
         self.columns.append(column)
 
+    def add_config(self, config: ColumnConfig):
+        if any(c.name == config.name for c in self.columns):
+            raise ValueError(f"Column '{config.name}' already exists.")
+        self.columns.append(config)
+
     def remove_column(self, name: str):
         self.columns = [col for col in self.columns if col.name != name]
 
