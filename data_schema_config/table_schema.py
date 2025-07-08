@@ -1,5 +1,5 @@
 from typing import List
-from data_schema_config.column_schema import ColumnConfig
+from data_schema_config.column_schema import ColumnType, ColumnConfig
 
 class TableSchema:
     def __init__(self):
