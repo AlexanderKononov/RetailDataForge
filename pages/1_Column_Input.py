@@ -11,6 +11,11 @@ if "table_schema" not in st.session_state:
 
 table_schema: TableSchema = st.session_state.table_schema
 
+
+
+
+
+
 with st.expander("➕ Add New Column", expanded=False):
     config = ColumnConfig.from_form()
     if config:
@@ -20,13 +25,17 @@ with st.expander("➕ Add New Column", expanded=False):
         except ValueError as e:
             st.warning(str(e))
 
-# Display existing columns
+# Display list of columns with delete buttons
 st.subheader("📋 Current Columns")
 
 columns = table_schema.get_columns()
 
 if columns:
     for idx, col in enumerate(columns, 1):
-        st.markdown(f"**{idx}.** `{col.name}` – *{col.type.value}*")
-else:
-    st.info("No columns defined yet. Add some using the form above.")
+        col_container = st.container()
+        with col_container:
+            col1, col2 = st.columns([6, 1])
+            col1.markdown(f"**{idx}.** `{col.name}` – *{col.type.value}*")
+            if col2.button("❌", key=f"delete_{col.name}"):
+                table_schema.remove_column(col.name)
+                st.rerun()
