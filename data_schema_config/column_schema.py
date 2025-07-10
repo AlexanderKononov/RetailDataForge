@@ -71,5 +71,5 @@ class StringColumnConfig(BaseColumnConfig):
 column_type_to_config_class = {
     ColumnType.INTEGER: IntegerColumnConfig,
     ColumnType.STRING: StringColumnConfig,
-    # Add others...
+    # Add others types as needed
 }

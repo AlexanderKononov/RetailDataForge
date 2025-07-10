@@ -1,9 +1,10 @@
 from typing import List, Type
+from pydantic import BaseModel, Field, ValidationError
 from data_schema_config.column_schema import BaseColumnConfig  # adjust import to your structure
 
-class TableSchema:
-    def __init__(self):
-        self.columns: List[BaseColumnConfig] = []
+class TableSchema(BaseModel):
+    columns: List[BaseColumnConfig] = Field(default_factory=list)
+    num_rows: int = 100
 
     def add_col_config(self, config: BaseColumnConfig):
         if any(c.name == config.name for c in self.columns):
@@ -16,9 +17,6 @@ class TableSchema:
     def get_columns(self) -> List[BaseColumnConfig]:
         return self.columns
 
-    def as_dict_list(self) -> List[dict]:
-        return [col.dict() for col in self.columns]
-
     def clear(self):
         self.columns = []
 
@@ -27,3 +25,11 @@ class TableSchema:
             if col.name == name:
                 return col
         return None
+    
+    def set_num_rows(self, num: int):
+        if num < 1:
+            raise ValueError("Row count must be at least 1.")
+        self.num_rows = num
+
+    def get_num_rows(self) -> int:
+        return self.num_rows
