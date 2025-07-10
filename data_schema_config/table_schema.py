@@ -1,6 +1,7 @@
 from typing import List, Type
+import pandas as pd
 from pydantic import BaseModel, Field, ValidationError
-from data_schema_config.column_schema import BaseColumnConfig  # adjust import to your structure
+from data_schema_config.column_schema import BaseColumnConfig, column_type_to_config_class
 
 class TableSchema(BaseModel):
     columns: List[BaseColumnConfig] = Field(default_factory=list)
@@ -33,3 +34,10 @@ class TableSchema(BaseModel):
 
     def get_num_rows(self) -> int:
         return self.num_rows
+    
+    def generate_dataframe(self) -> pd.DataFrame:
+        data = {}
+        for col in self.columns:
+            config_cls = column_type_to_config_class[col.type]
+            data[col.name] = config_cls.generate_data(col, self.num_rows)
+        return pd.DataFrame(data)

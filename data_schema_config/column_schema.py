@@ -1,7 +1,11 @@
 from pydantic import BaseModel, Field, ValidationError, conint, constr
 from enum import Enum
-from typing import Optional, Union
+import numpy as np
+from typing import Optional, List, Union
 import streamlit as st
+from faker import Faker
+
+fake = Faker()
 
 class ColumnType(str, Enum):
     INTEGER = "Integer"
@@ -34,6 +38,10 @@ class BaseColumnConfig(BaseModel):
 
         return config_cls.from_form(key_prefix=f"{key_prefix}_{col_type.value.lower()}")
     
+    @classmethod
+    def generate_data(cls, config: "BaseColumnConfig", n_rows: int) -> List:
+        return [None] * n_rows  # Default fallback
+    
 
 class IntegerColumnConfig(BaseColumnConfig):
     type: ColumnType = ColumnType.INTEGER
@@ -51,6 +59,11 @@ class IntegerColumnConfig(BaseColumnConfig):
             if submit and name.strip():
                 return cls(name=name.strip(), min_value=min_val, max_value=max_val)
         return None
+    
+    @classmethod
+    def generate_data(cls, config: "IntegerColumnConfig", n_rows: int) -> List[int]:
+        return np.random.randint(config.min_value, config.max_value + 1, size=n_rows).tolist()
+
 
 
 class StringColumnConfig(BaseColumnConfig):
@@ -67,6 +80,10 @@ class StringColumnConfig(BaseColumnConfig):
             if submit and name.strip():
                 return cls(name=name.strip(), max_length=max_len)
         return None
+    
+    @classmethod
+    def generate_data(cls, config: "StringColumnConfig", n_rows: int) -> List[str]:
+        return [fake.word()[:config.max_length] for _ in range(n_rows)]
     
 column_type_to_config_class = {
     ColumnType.INTEGER: IntegerColumnConfig,
