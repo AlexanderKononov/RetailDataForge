@@ -1,17 +1,11 @@
-from typing import List
-from data_schema_config.column_schema import ColumnType, ColumnConfig
+from typing import List, Type
+from data_schema_config.column_schema import BaseColumnConfig  # adjust import to your structure
 
 class TableSchema:
     def __init__(self):
-        self.columns: List[ColumnConfig] = []
+        self.columns: List[BaseColumnConfig] = []
 
-    def add_column(self, name: str, col_type: str):
-        column = ColumnConfig(name=name, type=col_type)
-        if any(c.name == column.name for c in self.columns):
-            raise ValueError(f"Column '{column.name}' already exists.")
-        self.columns.append(column)
-
-    def add_config(self, config: ColumnConfig):
+    def add_col_config(self, config: BaseColumnConfig):
         if any(c.name == config.name for c in self.columns):
             raise ValueError(f"Column '{config.name}' already exists.")
         self.columns.append(config)
@@ -19,7 +13,7 @@ class TableSchema:
     def remove_column(self, name: str):
         self.columns = [col for col in self.columns if col.name != name]
 
-    def get_columns(self) -> List[ColumnConfig]:
+    def get_columns(self) -> List[BaseColumnConfig]:
         return self.columns
 
     def as_dict_list(self) -> List[dict]:
@@ -27,3 +21,9 @@ class TableSchema:
 
     def clear(self):
         self.columns = []
+
+    def get_column_by_name(self, name: str) -> BaseColumnConfig | None:
+        for col in self.columns:
+            if col.name == name:
+                return col
+        return None

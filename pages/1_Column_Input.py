@@ -1,5 +1,5 @@
 import streamlit as st
-from data_schema_config.column_schema import ColumnType, ColumnConfig
+from data_schema_config.column_schema import BaseColumnConfig  
 from data_schema_config.table_schema import TableSchema
 
 
@@ -12,16 +12,12 @@ if "table_schema" not in st.session_state:
 table_schema: TableSchema = st.session_state.table_schema
 
 
-
-
-
-
-with st.expander("➕ Add New Column", expanded=False):
-    config = ColumnConfig.from_form()
-    if config:
+with st.expander("➕ Add New Column", expanded=True):
+    col_config = BaseColumnConfig.select_and_configure_column()
+    if col_config:
         try:
-            table_schema.add_config(config)
-            st.success(f"Added column: {config}")
+            table_schema.add_col_config(col_config)
+            st.success(f"Added column: {col_config}")
         except ValueError as e:
             st.warning(str(e))
 
