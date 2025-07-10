@@ -14,12 +14,7 @@ if "table_schema" not in st.session_state or not st.session_state.table_schema.g
     st.warning("No column schema found. Please define columns first.")
     st.stop()
 
-if "num_rows" not in st.session_state:
-    st.warning("Number of rows not defined. Please go to Step 2.")
-    st.stop()
-
 table_schema: TableSchema = st.session_state.table_schema
-num_rows: int = st.session_state.num_rows
 
 # Function to generate fake data
 def generate_data(schema: TableSchema, n_rows: int) -> pd.DataFrame:
@@ -41,7 +36,7 @@ def generate_data(schema: TableSchema, n_rows: int) -> pd.DataFrame:
 
 # Button to generate
 if st.button("🚀 Generate Synthetic Data"):
-    df = generate_data(table_schema, num_rows)
+    df = generate_data(table_schema, table_schema.get_num_rows())
     st.session_state.generated_data = df
     st.success("Synthetic data generated successfully!")
 
