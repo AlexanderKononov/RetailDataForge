@@ -12,7 +12,14 @@ class ColumnType(str, Enum):
     FLOAT = "Float"
     STRING = "String"
     BOOLEAN = "Boolean"
-
+    PERSON_NAME = "Person Name"
+    FIRST_NAME = "First Name"
+    LAST_NAME = "Last Name"
+    EMAIL = "Email"
+    PHONE_NUMBER = "Phone Number"
+    COUNTRY = "Country"
+    CITY = "City"
+    ADDRESS = "Address"
 
 class BaseColumnConfig(BaseModel):
     name: str
@@ -132,10 +139,151 @@ class BooleanColumnConfig(BaseColumnConfig):
             [True, False], size=n_rows, p=[config.true_probability, 1 - config.true_probability]
         ).tolist()
     
+
+class PersonNameColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.PERSON_NAME
+
+    @classmethod
+    def from_form(cls, key_prefix="person_name_cfg") -> Optional["PersonNameColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            col_label = "Column Name (e.g., 'Full Name')"
+            name = st.text_input(col_label, key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "PersonNameColumnConfig", n_rows: int) -> List[str]:
+        return [fake.name() for _ in range(n_rows)]
+    
+class FirstNameColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.FIRST_NAME
+
+    @classmethod
+    def from_form(cls, key_prefix="first_name_cfg") -> Optional["FirstNameColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'First Name')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "FirstNameColumnConfig", n_rows: int) -> List[str]:
+        return [fake.first_name() for _ in range(n_rows)]
+    
+class LastNameColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.LAST_NAME
+
+    @classmethod
+    def from_form(cls, key_prefix="last_name_cfg") -> Optional["LastNameColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'Last Name')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "LastNameColumnConfig", n_rows: int) -> List[str]:
+        return [fake.last_name() for _ in range(n_rows)]
+    
+class EmailColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.EMAIL
+
+    @classmethod
+    def from_form(cls, key_prefix="email_cfg") -> Optional["EmailColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'Email')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "EmailColumnConfig", n_rows: int) -> List[str]:
+        return [fake.email() for _ in range(n_rows)]
+
+class PhoneNumberColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.PHONE_NUMBER
+
+    @classmethod
+    def from_form(cls, key_prefix="phone_cfg") -> Optional["PhoneNumberColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'Phone')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "PhoneNumberColumnConfig", n_rows: int) -> List[str]:
+        return [fake.phone_number() for _ in range(n_rows)]
+
+class CountryColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.COUNTRY
+
+    @classmethod
+    def from_form(cls, key_prefix="country_cfg") -> Optional["CountryColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'Country')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "CountryColumnConfig", n_rows: int) -> List[str]:
+        return [fake.country() for _ in range(n_rows)]
+
+class CityColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.CITY
+
+    @classmethod
+    def from_form(cls, key_prefix="city_cfg") -> Optional["CityColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'City')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "CityColumnConfig", n_rows: int) -> List[str]:
+        return [fake.city() for _ in range(n_rows)]
+
+class AddressColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.ADDRESS
+
+    @classmethod
+    def from_form(cls, key_prefix="address_cfg") -> Optional["AddressColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name (e.g., 'Address')", key=f"{key_prefix}_name")
+            submit = st.form_submit_button("Add Column")
+            if submit and name.strip():
+                return cls(name=name.strip())
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "AddressColumnConfig", n_rows: int) -> List[str]:
+        return [fake.address().replace('\n', ', ') for _ in range(n_rows)]
+
+
 column_type_to_config_class = {
     ColumnType.INTEGER: IntegerColumnConfig,
     ColumnType.STRING: StringColumnConfig,
     ColumnType.FLOAT: FloatColumnConfig,
     ColumnType.BOOLEAN: BooleanColumnConfig,
+    ColumnType.PERSON_NAME: PersonNameColumnConfig,
+    ColumnType.FIRST_NAME: FirstNameColumnConfig,
+    ColumnType.LAST_NAME: LastNameColumnConfig,
+    ColumnType.EMAIL: EmailColumnConfig,
+    ColumnType.PHONE_NUMBER: PhoneNumberColumnConfig,
+    ColumnType.COUNTRY: CountryColumnConfig,
+    ColumnType.CITY: CityColumnConfig,
+    ColumnType.ADDRESS: AddressColumnConfig,
+
     # Add others types as needed
 }
