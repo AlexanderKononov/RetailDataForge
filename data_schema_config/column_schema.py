@@ -109,9 +109,33 @@ class FloatColumnConfig(BaseColumnConfig):
         raw = np.random.uniform(config.min_value, config.max_value, size=n_rows)
         return np.round(raw, decimals=config.precision).tolist()
     
+class BooleanColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.BOOLEAN
+    true_probability: float = 0.5  # Probability of generating True
+
+    @classmethod
+    def from_form(cls, key_prefix="bool_cfg") -> Optional["BooleanColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name", key=f"{key_prefix}_name")
+            probability = st.slider(
+                "Probability of True", min_value=0.0, max_value=1.0, value=0.5, step=0.01, key=f"{key_prefix}_prob"
+            )
+            submit = st.form_submit_button("Add Column")
+
+            if submit and name.strip():
+                return cls(name=name.strip(), true_probability=probability)
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "BooleanColumnConfig", n_rows: int) -> List[bool]:
+        return np.random.choice(
+            [True, False], size=n_rows, p=[config.true_probability, 1 - config.true_probability]
+        ).tolist()
+    
 column_type_to_config_class = {
     ColumnType.INTEGER: IntegerColumnConfig,
     ColumnType.STRING: StringColumnConfig,
     ColumnType.FLOAT: FloatColumnConfig,
+    ColumnType.BOOLEAN: BooleanColumnConfig,
     # Add others types as needed
 }
