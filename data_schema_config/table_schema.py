@@ -38,6 +38,9 @@ class TableSchema(BaseModel):
     def generate_dataframe(self) -> pd.DataFrame:
         data = {}
         for col in self.columns:
+            print(f"Generating data for column: {col.name} of type {col.type}")
             config_cls = column_type_to_config_class[col.type]
+            print(f"Using config class: {config_cls.__name__}")
+            print(config_cls)
             data[col.name] = config_cls.generate_data(col, self.num_rows)
         return pd.DataFrame(data)

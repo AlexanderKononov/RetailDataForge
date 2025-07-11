@@ -85,8 +85,33 @@ class StringColumnConfig(BaseColumnConfig):
     def generate_data(cls, config: "StringColumnConfig", n_rows: int) -> List[str]:
         return [fake.word()[:config.max_length] for _ in range(n_rows)]
     
+class FloatColumnConfig(BaseColumnConfig):
+    type: ColumnType = ColumnType.FLOAT
+    min_value: float = 0.0
+    max_value: float = 1.0
+    precision: int = 2  # Number of decimal places
+
+    @classmethod
+    def from_form(cls, key_prefix="float_cfg") -> Optional["FloatColumnConfig"]:
+        with st.form(f"{key_prefix}_form", clear_on_submit=True, border=False):
+            name = st.text_input("Column Name", key=f"{key_prefix}_name")
+            min_val = st.number_input("Minimum Value", value=0.0, key=f"{key_prefix}_min")
+            max_val = st.number_input("Maximum Value", value=1.0, key=f"{key_prefix}_max")
+            precision = st.number_input("Decimal Precision", value=2, min_value=0, max_value=10, key=f"{key_prefix}_precision")
+            submit = st.form_submit_button("Add Column")
+
+            if submit and name.strip():
+                return cls(name=name.strip(), min_value=min_val, max_value=max_val, precision=precision)
+        return None
+
+    @classmethod
+    def generate_data(cls, config: "FloatColumnConfig", n_rows: int) -> List[float]:
+        raw = np.random.uniform(config.min_value, config.max_value, size=n_rows)
+        return np.round(raw, decimals=config.precision).tolist()
+    
 column_type_to_config_class = {
     ColumnType.INTEGER: IntegerColumnConfig,
     ColumnType.STRING: StringColumnConfig,
+    ColumnType.FLOAT: FloatColumnConfig,
     # Add others types as needed
 }
