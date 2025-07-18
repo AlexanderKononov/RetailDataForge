@@ -32,8 +32,10 @@ class BaseColumnConfig(BaseModel):
             [t.value for t in ColumnType], 
             key=f"{key_prefix}_type"
         )
+        print(f"Selected column type: {col_type_str}")
         try:
             col_type = ColumnType(col_type_str)
+            print(f"Parsed column type: {col_type}")
         except ValueError:
             st.warning("Invalid column type.")
             return None
